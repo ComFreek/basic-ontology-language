@@ -1,6 +1,6 @@
 # WuV homework: BOL to FOL in Coq
 
-The **B**asic **O**ntology **L**anguage (BOL) is a toy language for designing ontologies made-up for educational purposes in the course [WuV](https://kwarc.info/courses/wuv/) by [Michael Kohlhase](https://kwarc.info/people/mkohlhase/) and [Florian Rabe](https://kwarc.info/people/frabe/). On the other hand, **F**irst-**O**rder **L**ogic (FOL) is a well-known logic. The homework was to give semantics of BOL in terms of FOL in your favorite digital system. I chose Coq.
+The **B**asic **O**ntology **L**anguage (BOL) is a toy language for designing ontologies made-up for educational purposes in a course on [knowledge representation and processing (WuV)](https://kwarc.info/courses/wuv/) by [Michael Kohlhase](https://kwarc.info/people/mkohlhase/) and [Florian Rabe](https://kwarc.info/people/frabe/). On the other hand, **F**irst-**O**rder **L**ogic (FOL) is a well-known logic. The homework was to give semantics of BOL in terms of FOL in your favorite digital system. I chose Coq.
 
 Sample BOL ontology as a Coq definition (and using a lot of notations):
 
