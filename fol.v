@@ -13,10 +13,12 @@ Definition folSignature := list folDecl.
 Definition folVariable := string.
 Inductive folTerm : Set :=
   | fromVar: folVariable -> folTerm
-  | folIndRef: string -> folTerm.
+  | folIndRef: string -> folTerm
+  | folFunctionApp: string -> list folTerm -> folTerm.
 
 Inductive folFormula : Set :=
     | folForall: folVariable -> folFormula -> folFormula
+    | folExists: folVariable -> folFormula -> folFormula
     | folBiimpl: folFormula -> folFormula -> folFormula
     | folImpl: folFormula -> folFormula -> folFormula
     | folDisjunction: folFormula -> folFormula -> folFormula
@@ -35,6 +37,7 @@ Definition folSystem := (folSignature * folTheory)%type.
 
 Fixpoint normalizeFormula (formula: folFormula): folFormula := match formula with
 | folForall      v f => folForall v    (normalizeFormula f)
+| folExists      v f => folExists v    (normalizeFormula f)
 | folBiimpl      f g => folBiimpl      (normalizeFormula f) (normalizeFormula g)
 | folImpl        f g => folImpl        (normalizeFormula f) (normalizeFormula g)
 | folDisjunction f g => folDisjunction (normalizeFormula f) (normalizeFormula g)

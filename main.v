@@ -17,15 +17,26 @@ Definition sampleOntology : bolOntology :=
     CON "professor" ;;
     CON "lecturer" ;;
     CON "course" ;;
+
     REL "teaches" ;;
+    REL "taught-at" ;;
     REL "responsible for" ;;
-    
+    PROP "ects" TYPE bolInt ;;
+    PROP "hard" TYPE bolBool ;;
+
     IND "FR" ;;
     IND "WuV" ;;
+    IND "FAU" ;;
   END
   THEORY
-    "FR" <."teaches" u "responsible for".> "WuV" ;;
-    "lecturer" == "professor" ;;
+    "WuV" HAS 5 OF "ects" ;;
+    "WuV" IS-NOT "hard" ;;
+    
+    "WuV" <."taught-at".> "FAU" ;;
+
+    "FR" IS-A "lecturer" ;;
+    "FR" <."teaches" ; "taught-at".> "FAU" ;;  (* FR teaches at least one course at FAU *)
+    "lecturer" <<= ("course" forall "teaches") ;; (* lecturers only teach courses, nothing else *)
   END.
 
 Compute (normalizeSystemFull (bolSemantics sampleOntology)).
