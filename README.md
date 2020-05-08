@@ -55,4 +55,20 @@ This is a tuple of a FOL signature and a theory thereover. The numbers specified
 
 ## Building and Usage
 
-Install Coq and run `coqc bol.v && coqc fol.v && coqc boltofol.v && coqc main.v`.
+Install Coq and run
+
+```
+coqc bol.v -R . boltofol
+coqc fol.v -R . boltofol
+coqc boltofol.v -R . boltofol
+coqc main.v -R . boltofol
+```
+
+Copyable one-liner for PowerShell:
+
+```
+$env:Path += ";C:\Coq\bin" ; coqc bol.v -R . boltofol ; coqc fol.v -R . boltofol ; coqc boltofol.v -R . boltofol ; coqc main.v -R . boltofol
+```
+
+Then you can seamlessly open `main.v` in CoqIDE (or other Coq IDEs) and step through it!
+
