@@ -38,8 +38,8 @@ Inductive bolDecl :=
 Inductive bolFormula :=
     | bolEq: bolConcept -> bolConcept -> bolFormula
     | bolSub: bolConcept -> bolConcept -> bolFormula
-    | is_a: bolID -> bolConcept -> bolFormula
-    | in_bolRel: bolInd -> bolRelation -> bolInd -> bolFormula
+    | bolIsA: bolInd -> bolConcept -> bolFormula
+    | bolInRel: bolInd -> bolRelation -> bolInd -> bolFormula
     | bolHasPropValue: bolInd -> bolProp -> bolValue -> bolFormula.
 
 Definition string_to_bolID := fun str => fromString str.
@@ -68,8 +68,8 @@ Notation "'PROP' i 'TYPE' t" := (bolPropDecl i t) (at level 60).
 
 Notation "c1 '==' c2" := (bolEq c1 c2) (at level 60).
 Notation "c1 '<<=' c2" := (bolSub c1 c2) (at level 60).
-Notation "i 'IS-A' c" := (is_a i c) (at level 60).
-Notation "i '<.' R '.>' j" := (in_bolRel i R j) (at level 60).
+Notation "i 'IS-A' c" := (bolIsA i c) (at level 60).
+Notation "i '<.' R '.>' j" := (bolInRel i R j) (at level 60).
 Notation "i 'HAS' v 'OF' P" := (bolHasPropValue i P v) (at level 60).
 Notation "i 'IS' P" := (bolHasPropValue i P (bolBoolValue true)) (at level 60).
 Notation "i 'IS-NOT' P" := (bolHasPropValue i P (bolBoolValue false)) (at level 60).

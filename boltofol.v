@@ -90,8 +90,8 @@ end.
 Fixpoint formulaSemantics (formula: bolFormula): folFormula := match formula with
 | bolEq c1 c2 => folForall "x" (folBiimpl (folApp (bolConSemantics c1) "x") (folApp (bolConSemantics c2) "x"))
 | bolSub c1 c2 => folForall "x" (folImpl (folApp (bolConSemantics c1) "x") (folApp (bolConSemantics c2) "x"))
-| in_bolRel c1 R c2 => folApp (folApp (bolRelSemantics R) (bolIndSemantics c1)) (bolIndSemantics c2)
-| is_a i c => folApp (bolConSemantics c) (bolIndSemantics i)
+| bolInRel c1 R c2 => folApp (folApp (bolRelSemantics R) (bolIndSemantics c1)) (bolIndSemantics c2)
+| bolIsA ind c => folApp (bolConSemantics c) (bolIndSemantics ind)
 | bolHasPropValue i P v => folApp (folApp (bolPropSemantics P) (bolIndSemantics i)) (bolValueSemantics v)
 end.
 
