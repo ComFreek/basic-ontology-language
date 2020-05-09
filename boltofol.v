@@ -98,6 +98,6 @@ end.
 Fixpoint bolTheorySemantics (bolThy: bolTheory): folTheory := map formulaSemantics bolThy.
 
 (* 3. Overall Semantics *)
-Definition bolSemantics (bolOntology: bolOntology): folSystem := match bolOntology with
+Definition bolSemantics (bolOntology: bolOntology): folSystem := normalizeSystemFull (match bolOntology with
 | (bolSig, bolTheory) => (bolSignatureSemantics bolSig, bolTheorySemantics bolTheory)
-end.
+end).
