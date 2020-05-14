@@ -9,6 +9,8 @@ Require Import fol.
 (* BOL Semantics in terms of FOL *)
 (* ============================= *)
 
+Module FOLSemantics.
+
 (* 1. Signature Semantics *)
 Fixpoint idSemantics (id: bolID): string := match id with
 | fromString str => str
@@ -97,7 +99,9 @@ end.
 
 Fixpoint bolTheorySemantics (bolThy: bolTheory): folTheory := map formulaSemantics bolThy.
 
+End FOLSemantics.
+
 (* 3. Overall Semantics *)
-Definition bolSemantics (bolOntology: bolOntology): folSystem := normalizeSystemFull (match bolOntology with
-| (bolSig, bolTheory) => (bolSignatureSemantics bolSig, bolTheorySemantics bolTheory)
+Definition folSemantics (bolOntology: bolOntology): folSystem := normalizeSystemFull (match bolOntology with
+| (bolSig, bolTheory) => (FOLSemantics.bolSignatureSemantics bolSig, FOLSemantics.bolTheorySemantics bolTheory)
 end).

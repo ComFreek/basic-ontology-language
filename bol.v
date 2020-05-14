@@ -86,6 +86,6 @@ Notation "R1 ';' R2" := (bolRelComp R1 R2) (at level 60).
 Notation "R '*'" := (bolRelTrans R) (at level 60).
 Notation "'inv' R" := (bolRelInv R) (at level 60).
 
-Notation "d1 ';;' d2" :=  (cons d1 d2) (at level 80, right associativity). (* ended by notation END below *)
-Notation "'SIGNATURE' decls 'THEORY' formulae" := (decls, formulae) (at level 80, right associativity).
-Notation "'END'" := nil (at level 60).
+Notation "d1 ';;' d2" :=  (cons d1 d2) (at level 80, right associativity, only parsing). (* ended by notation END below *)
+Notation "'SIGNATURE' decls 'THEORY' formulae" := (decls, formulae) (at level 80, right associativity, only parsing).
+Notation "'END'" := nil (at level 60, only parsing).

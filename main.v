@@ -10,7 +10,9 @@ Open Scope string_scope.
 
 Require Import bol.
 Require Import fol.
+Require Import sql.
 Require Import boltofol.
+Require Import boltosql.
 
 Definition sampleOntology : bolOntology :=
   SIGNATURE 
@@ -39,4 +41,6 @@ Definition sampleOntology : bolOntology :=
     "lecturer" <<= ("course" forall "teaches") ;; (* lecturers only teach courses, nothing else *)
   END.
 
-Compute (normalizeSystemFull (bolSemantics sampleOntology)).
+Compute (folSemantics sampleOntology).
+Compute (prettyPrintSqlSystem (sqlSemantics sampleOntology)).
+
