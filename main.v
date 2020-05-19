@@ -53,3 +53,12 @@ Compute (prettyPrintSqlSystem (sqlSemantics sampleOntology)).
    However, in SQL the distinction matters. If you specify an ontology with "ind IS-A concept", then the table for "concept" should contain "ind" (i.e., an INSERT INTO should have been generated) whereas as a formula no INSERT INTO should be generated.
 *)
 
+
+(* Design Decisions
+
+(1) Formalize contexts as lists
+
+    not as (Decl -> Type) * (Formula -> Type) functions as that doesn't allow generating fresh names
+
+*)
+

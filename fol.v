@@ -6,7 +6,7 @@ Open Scope string_scope.
 Inductive folDecl :=
     | functionSymbol: string -> nat -> folDecl (* nat is arity *)
     | predicateSymbol: string -> nat -> folDecl
-    | bolIndSymbol: string -> folDecl.
+    | folIndSymbol: string -> folDecl.
 
 Definition folSignature := list folDecl.
 

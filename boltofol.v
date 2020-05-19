@@ -17,7 +17,7 @@ Fixpoint idSemantics (id: bolID): string := match id with
 end.
 
 Fixpoint declSemantics (decl: bolDecl): folDecl := match decl with
-| bolIndDecl  id => bolIndSymbol (idSemantics id)
+| bolIndDecl  id => folIndSymbol (idSemantics id)
 | bolConDecl  id => predicateSymbol (idSemantics id) 1
 | bolRelDecl  id => predicateSymbol (idSemantics id) 2
 | bolPropDecl id _ => predicateSymbol (idSemantics id) 2

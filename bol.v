@@ -89,3 +89,16 @@ Notation "'inv' R" := (bolRelInv R) (at level 60).
 Notation "d1 ';;' d2" :=  (cons d1 d2) (at level 80, right associativity, only parsing). (* ended by notation END below *)
 Notation "'SIGNATURE' decls 'THEORY' formulae" := (decls, formulae) (at level 80, right associativity, only parsing).
 Notation "'END'" := nil (at level 60, only parsing).
+
+Definition bolDeclId (decl: bolDecl): bolID := match decl with
+| bolIndDecl id => id
+| bolConDecl id => id
+| bolRelDecl id => id
+| bolPropDecl id _ => id
+end.
+
+Definition bolIdEq (id id': bolID): bool := match id with
+| fromString s => match id' with
+  | fromString s' => eqb s s'
+  end
+end.
