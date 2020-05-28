@@ -163,6 +163,15 @@ Definition isContextSubset {declType formType: Type} (ctx ctx': context declType
 Lemma largerContext: forall ctx ctx' f, isContextSubset ctx ctx' -> ctx |- f -> ctx' |- f.
 Proof.
   move => ctx ctx' f Hsubset der.
+  elim: der f Hsubset ctx'.
+  - 
+  induction der => //.
+  - admit.
+  -  
+  remember ctx in der.
+  remember f in der.
+  elim: der => //.
+  - 
   dependent induction der => //.
   - by apply: ax; apply: (snd Hsubset).
   - admit.
