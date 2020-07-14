@@ -1,10 +1,8 @@
-# Basic Ontology Language: an experimental ontology in Coq with many semantics
+# Basic Ontology Language: an experimental ontology language in Coq with many semantics
 
 The **B**asic **O**ntology **L**anguage (BOL) is a toy language for designing ontologies made-up for educational purposes in a course on [knowledge representation and processing (WuV)](https://kwarc.info/courses/wuv/) by [Michael Kohlhase](https://kwarc.info/people/mkohlhase/) and [Florian Rabe](https://kwarc.info/people/frabe/).
 
-This repository
-
-- formalizes BOL
+This repository formalizes BOL and gives
 - a deductive semantics for BOL given by a derivation calculus
 - a semantics BOL -> FOL
 - a semantics BOL -> SQL
