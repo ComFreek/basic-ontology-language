@@ -34,6 +34,7 @@ Coercion var_to_term : string >-> folTerm.
 Definition folTheory := list folFormula.
 
 Definition folSystem := (folSignature * folTheory)%type.
+Definition folQuery := (folSystem * folFormula)%type.
 
 Fixpoint normalizeFormula (formula: folFormula): folFormula := match formula with
 | folForall      v f => folForall v    (normalizeFormula f)

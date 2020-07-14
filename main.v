@@ -7,6 +7,8 @@ Require Import List.
 Import ListNotations.
 Require Import String.
 Open Scope string_scope.
+Require Import Coq.Program.Basics.
+Open Scope program_scope.
 
 Require Import bol.
 Require Import fol.
@@ -22,30 +24,37 @@ Definition sampleOntology : bolOntology :=
     CON "course" ;;
 
     REL "teaches" ;;
-    REL "taught-at" ;;
-    REL "responsible for" ;;
+    REL "taughtat" ;;
+    REL "responsiblefor" ;;
     PROP "ects" TYPE bolInt ;;
     PROP "hard" TYPE bolBool ;;
 
-    IND "FR" ;;
-    IND "WuV" ;;
-    IND "FAU" ;;
+    IND "fr" ;;
+    IND "wuv" ;;
+    IND "fau" ;;
   END
   THEORY
-    "WuV" HAS 5 OF "ects" ;;
-    "WuV" IS-NOT "hard" ;;
+    "wuv" HAS 5 OF "ects" ;;
+    "wuv" IS-NOT "hard" ;;
     
-    "WuV" <."taughtAt".> "FAU" ;;
+    "wuv" IS-A "course" ;;
+    
+    "wuv" <."taughtat".> "fau" ;;
 
-    "FR" IS-A "lecturer" ;;
-    "FR" <."teaches" ; "taughtAt".> "FAU" ;;  (* FR teaches at least one course at FAU *)
+    "fr" IS-A "lecturer" ;;
+    "fr" <."teaches" ; "taughtat".> "fau" ;;  (* FR teaches at least one course at FAU *)
     "lecturer" <<= ("course" forall "teaches") ;; (* lecturers only teach courses, nothing else *)
   END.
 
-Definition bolToTPTP (ontology: bolOntology): string := folToTPTP (folSemantics ontology).
+Definition sampleQuery: bolQuery := 
+  (sampleOntology, "wuv" IS-A "course").
 
-Compute (folSemantics sampleOntology).
-Compute (bolToTPTP sampleOntology).
+Definition bolToTPTP := folToTPTP ∘ bolToFol.
+Definition bolQueryToTPTP := tptpQueryToString ∘ folQueryToTPTP ∘ bolQueryToFol.
+
+Compute (bolQueryToFol sampleQuery).
+Compute (bolQueryToTPTP sampleQuery).
+
 Compute (prettyPrintSqlSystem (sqlSemantics sampleOntology)).
 
 (* Question:
@@ -64,5 +73,14 @@ Compute (prettyPrintSqlSystem (sqlSemantics sampleOntology)).
 
     not as (Decl -> Type) * (Formula -> Type) functions as that doesn't allow generating fresh names
 
+*)
+
+(* Issues:
+
+   TPTP has strict naming conventions: function and predicate symbols must adhere to regex [a-z]+ while quantified variables must adhere to [A-Z]+.
+   
+   Hence, I changed the name generation in boltofol, but ideally, we want to do alpha-renaming on FOL formulae within foltotptp.
+   
+   However, that would require an alpha-renaming machinery to be implemented for fol.
 *)
 

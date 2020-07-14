@@ -60,6 +60,7 @@ Coercion nat_to_value: nat >-> bolValue.
 Definition bolSignature := list bolDecl.
 Definition bolTheory := list bolFormula.
 Definition bolOntology := (bolSignature * bolTheory)%type.
+Definition bolQuery := (bolOntology * bolFormula)%type.
 
 Notation "'CON' i"  := (bolConDecl i) (at level 60).
 Notation "'IND' i"  := (bolIndDecl i) (at level 60).

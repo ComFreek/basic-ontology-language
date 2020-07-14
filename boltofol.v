@@ -1,4 +1,5 @@
 Require Import List.
+Open Scope list_scope.
 
 Require Import String.
 Open Scope string_scope.
@@ -34,20 +35,20 @@ Fixpoint bolConSemantics (bolCon: bolConcept): folFormula := match bolCon with
 | bolAtomicCon (fromString id) => folPredicateRef id
 | bolConUnion c1 c2 => folLam (fun x => folDisjunction (folApp (bolConSemantics c1) x) (folApp (bolConSemantics c2) x))
 | bolConIntersect c1 c2 => folLam (fun x => folConjunction (folApp (bolConSemantics c1) x) (folApp (bolConSemantics c2) x))
-| bolRelDom R => folLam (fun x => folExists "y" (folApp (folApp (bolRelSemantics R) x) "y"))
-| bolRelCod R => folLam (fun y => folExists "x" (folApp (folApp (bolRelSemantics R) "x") y))
+| bolRelDom R => folLam (fun x => folExists "Y" (folApp (folApp (bolRelSemantics R) x) "Y"))
+| bolRelCod R => folLam (fun y => folExists "X" (folApp (folApp (bolRelSemantics R) "X") y))
 | bolConForall R c => folLam (fun x =>
-    folForall "y" (
+    folForall "Y" (
       folImpl
-        (folApp (folApp (bolRelSemantics R) x) "y")
-        (folApp (bolConSemantics c) "y")
+        (folApp (folApp (bolRelSemantics R) x) "Y")
+        (folApp (bolConSemantics c) "Y")
     )
   )
 | bolConExists R c => folLam (fun x =>
-    folExists "y" (
+    folExists "Y" (
       folConjunction
-        (folApp (folApp (bolRelSemantics R) x) "y")
-        (folApp (bolConSemantics c) "y")
+        (folApp (folApp (bolRelSemantics R) x) "Y")
+        (folApp (bolConSemantics c) "Y")
     )
   )
 end
@@ -60,10 +61,10 @@ with bolRelSemantics (rel: bolRelation): folFormula := match rel with
       (folApp (folApp (bolRelSemantics R2) i) j)
   ))
 | bolRelComp R1 R2 => folLam (fun i => folLam (fun j =>
-    folExists "z" (
+    folExists "Z" (
       folConjunction 
-        (folApp (folApp (bolRelSemantics R1) i) "z")
-        (folApp (folApp (bolRelSemantics R2) "z") j)
+        (folApp (folApp (bolRelSemantics R1) i) "Z")
+        (folApp (folApp (bolRelSemantics R2) "Z") j)
     )))
 | bolRelInv R => folLam (fun i => folLam (fun j =>
     folApp (folApp (bolRelSemantics R) j) i
@@ -79,8 +80,8 @@ Fixpoint bolPropSemantics (prop: bolProp): folFormula := match prop with
 end.
 
 Fixpoint naturalNumberSemantics (n: nat): folTerm := match n with
-| 0 => folFunctionApp "Z" nil
-| S n' => folFunctionApp "S" (cons (naturalNumberSemantics n') nil)
+| 0 => folFunctionApp "z" nil
+| S n' => folFunctionApp "s" (cons (naturalNumberSemantics n') nil)
 end.
 
 Fixpoint bolValueSemantics (val: bolValue): folTerm := match val with
@@ -90,8 +91,8 @@ Fixpoint bolValueSemantics (val: bolValue): folTerm := match val with
 end.
 
 Fixpoint formulaSemantics (formula: bolFormula): folFormula := match formula with
-| bolEq c1 c2 => folForall "x" (folBiimpl (folApp (bolConSemantics c1) "x") (folApp (bolConSemantics c2) "x"))
-| bolSub c1 c2 => folForall "x" (folImpl (folApp (bolConSemantics c1) "x") (folApp (bolConSemantics c2) "x"))
+| bolEq c1 c2 => folForall "X" (folBiimpl (folApp (bolConSemantics c1) "X") (folApp (bolConSemantics c2) "X"))
+| bolSub c1 c2 => folForall "X" (folImpl (folApp (bolConSemantics c1) "X") (folApp (bolConSemantics c2) "X"))
 | bolInRel c1 R c2 => folApp (folApp (bolRelSemantics R) (bolIndSemantics c1)) (bolIndSemantics c2)
 | bolIsA ind c => folApp (bolConSemantics c) (bolIndSemantics ind)
 | bolHasPropValue i P v => folApp (folApp (bolPropSemantics P) (bolIndSemantics i)) (bolValueSemantics v)
@@ -102,6 +103,21 @@ Fixpoint bolTheorySemantics (bolThy: bolTheory): folTheory := map formulaSemanti
 End FOLSemantics.
 
 (* 3. Overall Semantics *)
-Definition folSemantics (bolOntology: bolOntology): folSystem := normalizeSystemFull (match bolOntology with
+Definition bolToFol (bolOntology: bolOntology): folSystem := normalizeSystemFull (match bolOntology with
 | (bolSig, bolTheory) => (FOLSemantics.bolSignatureSemantics bolSig, FOLSemantics.bolTheorySemantics bolTheory)
 end).
+Check fst.
+Definition bolQueryToFol (query: bolQuery): folQuery := match query with
+| (bolContext, bolFormula) => match (bolToFol bolContext) with
+(* Problem here is that folFormula does not need to be normalized
+
+   => pack it into a system and call normalizeSystemFull, then extract via last (TODO this is brittle)
+*)
+   
+   (folSignature, folTheory) => let folFormula := FOLSemantics.formulaSemantics bolFormula in 
+   
+    match (normalizeSystemFull (folSignature, (folTheory ++ (cons folFormula nil))%list)) with
+    | (_, newTheory) => ((folSignature, folTheory), last newTheory folFormula)
+    end
+  end
+end.

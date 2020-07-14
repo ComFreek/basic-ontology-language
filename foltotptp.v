@@ -8,9 +8,15 @@ Open Scope string_scope.
 Require Import utils.
 Require Import fol.
 
+Definition TPTPTheory := list string.
+Definition TPTPTerm := string.
+Definition TPTPFormula := string.
+Definition TPTPSystem := list string.
+Definition TPTPQuery := list string.
+
 Module TPTPSemantics.
 
-Fixpoint termSemantics (t: folTerm): string := match t with
+Fixpoint termSemantics (t: folTerm): TPTPTerm := match t with
 | fromVar v => v
 | folIndRef i => i
 | folFunctionApp f args => match args with
@@ -19,11 +25,11 @@ Fixpoint termSemantics (t: folTerm): string := match t with
 end
 end.
 
-Fixpoint formulaSemantics (f: folFormula): string := match f with
-| folForall v f => "![" ++ v ++ "] " ++ formulaSemantics f
-| folExists v f => "?[" ++ v ++ "] " ++ formulaSemantics f
-| folBiimpl f g => "(" ++ (formulaSemantics f) ++ ") <=> (" ++ (formulaSemantics g)
-| folImpl   f g => "(" ++ (formulaSemantics f) ++ ") => (" ++ (formulaSemantics g)
+Fixpoint formulaSemantics (f: folFormula): TPTPFormula := match f with
+| folForall v f => "![" ++ v ++ "] : (" ++ (formulaSemantics f) ++ ")"
+| folExists v f => "?[" ++ v ++ "] : (" ++ (formulaSemantics f) ++ ")"
+| folBiimpl f g => "(" ++ (formulaSemantics f) ++ ") <=> (" ++ (formulaSemantics g) ++ ")"
+| folImpl   f g => "(" ++ (formulaSemantics f) ++ ") => (" ++ (formulaSemantics g) ++ ")"
 | folDisjunction f g => "(" ++ (formulaSemantics f) ++ ") | (" ++ (formulaSemantics g) ++ ")"
 | folConjunction f g =>  "(" ++ (formulaSemantics f) ++ ") & (" ++ (formulaSemantics g) ++ ")"
 | folEq s t => "(" ++ (termSemantics s) ++ ") = (" ++ (termSemantics t) ++ ")"
@@ -39,19 +45,21 @@ Fixpoint formulaSemantics (f: folFormula): string := match f with
 | folLam _ => "folLam to TPTP unsupported! Eliminate folLam first by running normalizeSystemFull."
 end.
 
-Fixpoint mapWithIndexHelper {A B: Type} (curIndex: nat) (f: nat -> A -> B) (l: list A): list B := match l with
-| nil => nil
-| cons x xs => cons (f curIndex x) (mapWithIndexHelper (S curIndex) f xs)
-end.
-
-Definition mapWithIndex {A B: Type} (f: nat -> A -> B) (l: list A): list B := mapWithIndexHelper 0 f l.
-
-Fixpoint folTheorySemantics (folThy: folTheory): list string := mapWithIndex
-  (fun idx => fun f => "fof(" ++ (nat_to_string idx) ++ ", axiom, " ++ (formulaSemantics f) ++ ")") folThy.
+Fixpoint folTheorySemantics (folThy: folTheory): TPTPTheory:= mapWithIndex
+  (fun idx => fun f => "fof(" ++ (nat_to_string idx) ++ ", axiom, " ++ (formulaSemantics f) ++ ").") folThy.
 
 End TPTPSemantics.
 
 (* 3. Overall Semantics *)
-Definition folToTPTP (folOntology: folSystem): string := match folOntology with
-| (folSig, folTheory) => concat newline (TPTPSemantics.folTheorySemantics folTheory)
+Definition folToTPTP (folOntology: folSystem): TPTPSystem := match folOntology with
+| (folSig, folTheory) => TPTPSemantics.folTheorySemantics folTheory
 end.
+
+Definition folQueryToTPTP (query: folQuery): TPTPQuery := match query with
+| (system, formula) =>
+    let tptpFormula := "fof(query, conjecture, " ++ (TPTPSemantics.formulaSemantics formula) ++ ")." in
+    app (folToTPTP system) (cons newline (cons tptpFormula nil))
+end.
+
+Definition tptpSystemToString := concat newline.
+Definition tptpQueryToString := concat newline.
