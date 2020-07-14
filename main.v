@@ -13,6 +13,7 @@ Require Import fol.
 Require Import sql.
 Require Import boltofol.
 Require Import boltosql.
+Require Import foltotptp.
 
 Definition sampleOntology : bolOntology :=
   SIGNATURE 
@@ -34,14 +35,17 @@ Definition sampleOntology : bolOntology :=
     "WuV" HAS 5 OF "ects" ;;
     "WuV" IS-NOT "hard" ;;
     
-    "WuV" <."taught-at".> "FAU" ;;
+    "WuV" <."taughtAt".> "FAU" ;;
 
     "FR" IS-A "lecturer" ;;
-    "FR" <."teaches" ; "taught-at".> "FAU" ;;  (* FR teaches at least one course at FAU *)
+    "FR" <."teaches" ; "taughtAt".> "FAU" ;;  (* FR teaches at least one course at FAU *)
     "lecturer" <<= ("course" forall "teaches") ;; (* lecturers only teach courses, nothing else *)
   END.
 
+Definition bolToTPTP (ontology: bolOntology): string := folToTPTP (folSemantics ontology).
+
 Compute (folSemantics sampleOntology).
+Compute (bolToTPTP sampleOntology).
 Compute (prettyPrintSqlSystem (sqlSemantics sampleOntology)).
 
 (* Question:
