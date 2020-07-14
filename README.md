@@ -52,7 +52,7 @@ The output is:
      : string
 ```
 
-This TPTP document can then be feed, for instance, to the [Vampire](https://vprover.github.io/) automatic theorem prover.
+This TPTP document can then be fed, for instance, to the [Vampire](https://vprover.github.io/) automatic theorem prover.
 
 ## Building and Usage
 
