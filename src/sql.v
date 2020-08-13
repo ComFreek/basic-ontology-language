@@ -55,13 +55,13 @@ Definition sqlSignature := list sqlDecl.
 Definition sqlTheory := list sqlQuery.
 Definition sqlSystem := (sqlSignature * sqlTheory)%type.
 
-Fixpoint sqlPrettyPrintType (tp: sqlColumnType): string := match tp with
+Definition sqlPrettyPrintType (tp: sqlColumnType): string := match tp with
 | sqlStringType => "VARCHAR(200)"
 | sqlIntType => "INT"
 | sqlUnknownType => "???UNKNOWN-TYPE???"
 end.
 
-Fixpoint sqlPrettyPrintDecl (decl: sqlDecl): string := match decl with
+Definition sqlPrettyPrintDecl (decl: sqlDecl): string := match decl with
 | sqlTableDecl t c => let columnStr := concat ", " (map (fun col => match col with | (name, tp) => "`" ++ name ++ "` " ++ sqlPrettyPrintType tp end) c) in
     "CREATE TABLE `" ++ t ++ "` (" ++ columnStr ++ ")"
 | sqlInsert t v => "INSERT INTO `" ++ t ++ "` (" ++ (concat ", " v) ++ ")"

@@ -13,27 +13,27 @@ Open Scope string_scope.
 Module SQLSemantics.
 
 (* 1. Signature Semantics *)
-Fixpoint idSemantics (id: bolID): string := match id with
+Definition idSemantics (id: bolID): string := match id with
 | fromString str => str
 end.
 
-Fixpoint typeSemantics (tp: bolType): sqlColumnType := match tp with
+Definition typeSemantics (tp: bolType): sqlColumnType := match tp with
 | bolInt => sqlIntType
 | bolString => sqlStringType
 | _ => sqlUnknownType (* todo *)
 end.
 
-Fixpoint declSemantics (decl: bolDecl): sqlDecl := match decl with
+Definition declSemantics (decl: bolDecl): sqlDecl := match decl with
 | bolIndDecl  id => sqlInsert "individuals" [(idSemantics id)]
 | bolConDecl  id => sqlTableDecl (idSemantics id) [("ind", sqlStringType)]
 | bolRelDecl  id => sqlTableDecl (idSemantics id) ([("sub", sqlStringType)] ++ [("obj", sqlStringType)])
 | bolPropDecl id tp => sqlTableDecl (idSemantics id) ([("ind", sqlStringType)] ++ [("val", (typeSemantics tp))])
 end.
 
-Fixpoint bolSignatureSemantics (bolSig: bolSignature): sqlSignature := map declSemantics bolSig.
+Definition bolSignatureSemantics (bolSig: bolSignature): sqlSignature := map declSemantics bolSig.
 
 (* 2. Theory Semantics *)
-Fixpoint bolIndSemantics (ind: bolInd): string := match ind with
+Definition bolIndSemantics (ind: bolInd): string := match ind with
 | fromID (fromString id) => id
 end.
 
@@ -58,17 +58,17 @@ with bolRelSemantics (rel: bolRelation): sqlQuery := match rel with
 | bolRelDiag c => sqlProj (sqlColumnList (["ind"] ++ ["ind"])) (bolConSemantics c)
 end.
 
-Fixpoint bolPropSemantics (prop: bolProp): sqlQuery := match prop with
+Definition bolPropSemantics (prop: bolProp): sqlQuery := match prop with
 | bolAtomicProp (fromString id) => sqlProj sqlAllColumns id
 end.
 
-Fixpoint bolValueSemantics (val: bolValue): sqlScalarExpression := match val with
+Definition bolValueSemantics (val: bolValue): sqlScalarExpression := match val with
 | bolNaturalNumberValue n => sqlNaturalNumber n
 | bolBoolValue true => sqlTrue
 | bolBoolValue false => sqlFalse
 end.
 
-Fixpoint formulaSemantics (formula: bolFormula): sqlQuery := match formula with
+Definition formulaSemantics (formula: bolFormula): sqlQuery := match formula with
 | bolEq c1 c2 => let s1 := bolConSemantics c1 in let s2 := bolConSemantics c2 in
     sqlUnion (sqlExcept s1 s2) (sqlExcept s2 s1)
 | bolSub c1 c2 => sqlExcept (bolConSemantics c1) (bolConSemantics c2)
@@ -78,7 +78,7 @@ Fixpoint formulaSemantics (formula: bolFormula): sqlQuery := match formula with
 | bolHasPropValue i P v => sqlSelect sqlAllColumns (bolPropSemantics P) (sqlAnd (sqlEq "ind" (bolIndSemantics i)) (sqlEq "val" (bolValueSemantics v)))
 end.
 
-Fixpoint bolTheorySemantics (bolThy: bolTheory): sqlTheory := map formulaSemantics bolThy.
+Definition bolTheorySemantics (bolThy: bolTheory): sqlTheory := map formulaSemantics bolThy.
 
 End SQLSemantics.
 

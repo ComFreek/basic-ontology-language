@@ -13,21 +13,21 @@ Require Import fol.
 Module FOLSemantics.
 
 (* 1. Signature Semantics *)
-Fixpoint idSemantics (id: bolID): string := match id with
+Definition idSemantics (id: bolID): string := match id with
 | fromString str => str
 end.
 
-Fixpoint declSemantics (decl: bolDecl): folDecl := match decl with
+Definition declSemantics (decl: bolDecl): folDecl := match decl with
 | bolIndDecl  id => folIndSymbol (idSemantics id)
 | bolConDecl  id => predicateSymbol (idSemantics id) 1
 | bolRelDecl  id => predicateSymbol (idSemantics id) 2
 | bolPropDecl id _ => predicateSymbol (idSemantics id) 2
 end.
 
-Fixpoint bolSignatureSemantics (bolSig: bolSignature): folSignature := map declSemantics bolSig.
+Definition bolSignatureSemantics (bolSig: bolSignature): folSignature := map declSemantics bolSig.
 
 (* 2. Theory Semantics *)
-Fixpoint bolIndSemantics (ind: bolInd): folTerm := match ind with
+Definition bolIndSemantics (ind: bolInd): folTerm := match ind with
 | fromID (fromString id) => folIndRef id
 end.
 
@@ -75,7 +75,7 @@ with bolRelSemantics (rel: bolRelation): folFormula := match rel with
   ))
 end.
 
-Fixpoint bolPropSemantics (prop: bolProp): folFormula := match prop with
+Definition bolPropSemantics (prop: bolProp): folFormula := match prop with
 | bolAtomicProp (fromString id) => folPredicateRef id
 end.
 
@@ -84,13 +84,13 @@ Fixpoint naturalNumberSemantics (n: nat): folTerm := match n with
 | S n' => folFunctionApp "s" (cons (naturalNumberSemantics n') nil)
 end.
 
-Fixpoint bolValueSemantics (val: bolValue): folTerm := match val with
+Definition bolValueSemantics (val: bolValue): folTerm := match val with
 | bolNaturalNumberValue n => naturalNumberSemantics n
 | bolBoolValue true => folIndRef "true"
 | bolBoolValue false => folIndRef "false"
 end.
 
-Fixpoint formulaSemantics (formula: bolFormula): folFormula := match formula with
+Definition formulaSemantics (formula: bolFormula): folFormula := match formula with
 | bolEq c1 c2 => folForall "X" (folBiimpl (folApp (bolConSemantics c1) "X") (folApp (bolConSemantics c2) "X"))
 | bolSub c1 c2 => folForall "X" (folImpl (folApp (bolConSemantics c1) "X") (folApp (bolConSemantics c2) "X"))
 | bolInRel c1 R c2 => folApp (folApp (bolRelSemantics R) (bolIndSemantics c1)) (bolIndSemantics c2)
@@ -98,7 +98,7 @@ Fixpoint formulaSemantics (formula: bolFormula): folFormula := match formula wit
 | bolHasPropValue i P v => folApp (folApp (bolPropSemantics P) (bolIndSemantics i)) (bolValueSemantics v)
 end.
 
-Fixpoint bolTheorySemantics (bolThy: bolTheory): folTheory := map formulaSemantics bolThy.
+Definition bolTheorySemantics (bolThy: bolTheory): folTheory := map formulaSemantics bolThy.
 
 End FOLSemantics.
 
